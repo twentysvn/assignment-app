@@ -1,17 +1,20 @@
 import {View, Text, Pressable, ScrollView} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {setPlaces, setRecent} from '../../redux/actions/places';
-import MapView from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 
 const Index = () => {
   const [Query, setQuery] = useState('');
-  const {locations} = useSelector(state => state.places);
-  const {recent} = useSelector(state => state.places);
+  const [MarkerData, setMarkerData] = useState({
+    lat: 0,
+    lng: 0,
+    desc: '',
+    title: '',
+  });
+  const {locations, recent} = useSelector(state => state.places);
   const dispatch = useDispatch();
-
-  useEffect(() => {}, []);
 
   const onChange = query => {
     setQuery(query);
@@ -25,10 +28,20 @@ const Index = () => {
     }
     pushed.push(item);
     dispatch(setRecent(pushed));
+    console.log('ITEM', item);
+
+    let {formatted_address, geometry} = item;
+    setMarkerData({
+      title: 'Location',
+      desc: formatted_address,
+      lat: geometry.location.lat,
+      lng: geometry.location.lng,
+    });
+    setQuery('');
   };
 
   const Row = ({data}) => {
-    let {formatted_address, geometry} = data;
+    let {formatted_address} = data;
     return (
       <Pressable
         onPress={() => onPress(data)}
@@ -53,8 +66,16 @@ const Index = () => {
             longitude: -122.4324,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
-          }}
-        />
+          }}>
+          {MarkerData.lat && MarkerData.lng && (
+            <Marker
+              key={1}
+              coordinate={{latitude: MarkerData.lat, longitude: MarkerData.lng}}
+              title={MarkerData.title}
+              description={MarkerData.desc}
+            />
+          )}
+        </MapView>
       </View>
       <View style={{position: 'absolute', width: '100%', height: '100%'}}>
         <TextInput label="Search" value={Query} onChangeText={onChange} />
