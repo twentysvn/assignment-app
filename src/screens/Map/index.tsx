@@ -118,7 +118,11 @@ const Index = () => {
         </MapView>
       </View>
       <View style={{position: 'absolute', width: '100%', height: '100%'}}>
-        <TextInput label="Search" value={Query} onChangeText={onChange} />
+        <TextInput
+          label="Search location"
+          value={Query}
+          onChangeText={onChange}
+        />
         {Query.length > 1 && (
           <ScrollView>
             {locations.map((item, index) => {
