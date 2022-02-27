@@ -119,9 +119,11 @@ const Index = () => {
       </View>
       <View style={{position: 'absolute', width: '100%', height: '100%'}}>
         <TextInput
+          mode="outlined"
           label="Search location"
           value={Query}
           onChangeText={onChange}
+          style={{marginLeft: 10, marginRight: 10, marginTop: 10}}
         />
         {Query.length > 1 && (
           <ScrollView>
