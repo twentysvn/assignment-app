@@ -1,8 +1,16 @@
-import React, {useState} from 'react';
-import {Image, Pressable, ScrollView, Text, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  BackHandler,
+} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
+import {CamOptions} from '../../helper';
 import {setPlaces} from '../../redux/actions/places';
 
 const Index = () => {
@@ -13,9 +21,32 @@ const Index = () => {
     desc: '',
     title: '',
   });
+  const [Camera, setCamera] = useState({
+    ...CamOptions,
+    center: {
+      latitude: -7.743651,
+      longitude: 110.396118,
+    },
+  });
   const {locations} = useSelector(state => state.places);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const backAction = () => {
+      onChange('');
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
 
   const onChange = query => {
     setQuery(query);
@@ -29,6 +60,13 @@ const Index = () => {
       desc: formatted_address,
       lat: geometry.location.lat,
       lng: geometry.location.lng,
+    });
+    setCamera({
+      ...CamOptions,
+      center: {
+        latitude: geometry.location.lat,
+        longitude: geometry.location.lng,
+      },
     });
     setQuery('');
   };
@@ -68,14 +106,7 @@ const Index = () => {
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1}}>
-        <MapView
-          style={{flex: 1}}
-          initialRegion={{
-            latitude: -6.942246,
-            longitude: 111.109226,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}>
+        <MapView style={{flex: 1}} camera={Camera}>
           {MarkerData.lat != 0 && MarkerData.lng != 0 && (
             <Marker
               key={1}
@@ -90,9 +121,6 @@ const Index = () => {
         <TextInput label="Search" value={Query} onChangeText={onChange} />
         {Query.length > 1 && (
           <ScrollView>
-            {/* {recent.map((item, index) => {
-              return <Row data={item} key={index} />;
-            })} */}
             {locations.map((item, index) => {
               return <Row data={item} key={index} />;
             })}
