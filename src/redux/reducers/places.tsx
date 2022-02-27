@@ -3,7 +3,6 @@ import {placesInterfaces} from '../types/places';
 
 const initialState: placesInterfaces = {
   locations: [],
-  recent: [],
 };
 
 export const places = (
@@ -14,8 +13,6 @@ export const places = (
   switch (action.type) {
     case 'set_places':
       return {...state, ...payload};
-    case 'set_recent':
-      return {...state, recent: payload};
     case 'clear_places':
       return {...initialState};
     default:

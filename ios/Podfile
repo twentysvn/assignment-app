@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-target 'rntemplate' do
+target 'assignmentapp' do
   config = use_native_modules!
 
   use_react_native!(
@@ -12,7 +12,7 @@ target 'rntemplate' do
     :hermes_enabled => false
   )
 
-  target 'rntemplateTests' do
+  target 'assignmentappTests' do
     inherit! :complete
     # Pods for testing
   end
